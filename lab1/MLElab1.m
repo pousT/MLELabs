@@ -1,14 +1,32 @@
 
-%Get images names
-imagefiles_q = dir('*.png');
-%Number of files found
-nfiles_q = length(imagefiles_q);
-%Read in images
-for ii=1:nfiles_q
-   %Get current image's name
-   currentfilename = imagefiles_q(ii).name;
-   %Read in current image
-   currentimage = imread(currentfilename);
-   %Save current image in images_q
-   images_q{ii} = currentimage;
+% Open file with permession Read
+% Return an id of the file
+fid = fopen('train-images-idx3-ubyte','r');
+% Read file
+
+% The first 32 bits(4 bytes) of MNIST is a magic number
+% If not 2051, then there is sth wrong when reading file
+magicNumber = fread(fid, 1, 'int32');
+% Should be 2051
+if magicNumber ~= 2051
+     error('Invalid image file header');
 end
+
+% The next 4 bytes is num of images in total
+total = fread(fid, 1, 'int32');
+% The next 4 bytes is num of rows
+numRows = fread(fid, 1, 'int32');
+% The next 4 bytes is num of columns
+numCols = fread(fid, 1, 'int32');
+% Store image into an individual slice
+images = zeros(numRows, numCols, totalImages, 'uint8');
+for k = 1 : total
+    % Read in numRows*numCols pixels at a time
+    A = fread(fid1, numRows*numCols, 'uint8');
+    % Reshape so that it becomes a matrix
+    % We are actually reading this in column major format
+    % so we need to transpose this at the end
+    images(:,:,k) = reshape(uint8(A), numCols, numRows).';
+end
+% Close the file
+fclose(fid);
