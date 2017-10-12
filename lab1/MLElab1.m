@@ -6,20 +6,23 @@ fid = fopen('train-images-idx3-ubyte','r');
 
 % The first 32 bits(4 bytes) of MNIST is a magic number
 % If not 2051, then there is sth wrong when reading file
-magicNumber = fread(fid, 1, 'int32');
+magicNumber = fread(fid, 1, 'uint32');
 % Should be 2051
 if magicNumber ~= 2051
      error('Invalid image file header');
 end
 
 % The next 4 bytes is num of images in total
-total = fread(fid, 1, 'int32');
+total = fread(fid, 1, 'uint32');
+total = swapbytes(uint32(total));
 % The next 4 bytes is num of rows
 % 28 in this case
-numRows = fread(fid, 1, 'int32');
+numRows = fread(fid, 1, 'uint32');
+numRows = swapbytes(uint32(numRows));
 % The next 4 bytes is num of columns
 % 28 in this case
-numCols = fread(fid, 1, 'int32');
+numCols = fread(fid, 1, 'uint32');
+numCols = swapbytes(uint32(numCols));
 % Store image into an individual slice
 % Each image is 28 * 28 * 8bits(1byte)
 images = zeros(numRows, numCols, totalImages, 'uint8');
