@@ -8,7 +8,7 @@ fid = fopen('train-images-idx3-ubyte','r');
 % If not 2051, then there is sth wrong when reading file
 magicNumber = fread(fid, 1, 'uint32');
 % Should be 2051
-if magicNumber ~= 2051
+if swapbytes(uint32(magicNumber)) ~= 2051
      error('Invalid image file header');
 end
 
@@ -25,10 +25,10 @@ numCols = fread(fid, 1, 'uint32');
 numCols = swapbytes(uint32(numCols));
 % Store image into an individual slice
 % Each image is 28 * 28 * 8bits(1byte)
-images = zeros(numRows, numCols, totalImages, 'uint8');
+images = zeros(numRows, numCols, total, 'uint8');
 for k = 1 : total
     % Read in numRows*numCols pixels at a time
-    A = fread(fid1, numRows*numCols, 'uint8');
+    A = fread(fid, numRows*numCols, 'uint8');
     % Reshape so that it becomes a matrix
     images(:,:,k) = reshape(uint8(A), numCols, numRows).';
 end
